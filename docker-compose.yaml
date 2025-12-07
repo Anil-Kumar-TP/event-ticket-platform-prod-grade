@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    ports:
+      - "5433:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: ticket_user
+      POSTGRES_PASSWORD: ticket
+      POSTGRES_DB: ticket_db
+      TZ: Asia/Kolkata
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer_ui
+    restart: always
+    ports:
+      - "8088:8080"
