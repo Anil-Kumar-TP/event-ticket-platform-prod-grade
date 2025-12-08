@@ -1,0 +1,46 @@
+package com.anil.event_ticket.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "ticket_validation")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@EntityListeners(AuditingEntityListener.class)
+public class TicketValidation {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id",updatable = false,nullable = false)
+    private UUID id;
+
+    @Column(name = "status",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TicketValidationStatusEnum status;
+
+    @Column(name = "validation_method",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TicketValidationMethodEnum validationMethod;
+
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumn(name = "ticket_id",nullable = false,updatable = false)
+    private Ticket ticket;
+
+    @CreatedDate
+    @Column(name = "created_at",updatable = false,nullable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at",nullable = false)
+    private LocalDateTime updatedAt;
+}

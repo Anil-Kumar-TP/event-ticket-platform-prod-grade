@@ -7,8 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "events")
@@ -56,6 +55,20 @@ public class Event {
     //this is why the helper method looks different.
     public void setOrganizer(User organizer) {
         this.organizer = Objects.requireNonNull(organizer);
+    }
+
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL,orphanRemoval = true)
+    @Builder.Default
+    private Set<TicketType> ticketTypes = new HashSet<>();
+
+    public void addTicketType(TicketType ticketType) {
+        ticketTypes.add(Objects.requireNonNull(ticketType));
+        ticketType.setEvent(this);  // ← maintain both sides
+    }
+
+    public void removeTicketType(TicketType ticketType) {
+        ticketTypes.remove(ticketType);
+        ticketType.setEvent(null);
     }
 
     @CreatedDate
