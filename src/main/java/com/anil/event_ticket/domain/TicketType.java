@@ -45,14 +45,14 @@ public class TicketType {
         this.remainingQuantity = this.totalQuantity;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumn(name = "event_id",nullable = false,updatable = false)
+    private Event event;
+
     // Helper — only way to change event
     void setEvent(Event event) {
         this.event = Objects.requireNonNull(event);
     }
-
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name = "event_id",nullable = false,updatable = false)
-    private Event event;
 
     @CreatedDate
     @Column(name = "created_at",updatable = false,nullable = false)

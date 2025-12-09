@@ -35,6 +35,10 @@ public class QrCode {
     @JoinColumn(name = "ticket_id",nullable = false,unique = true)
     private Ticket ticket;
 
+    void setTicket(@NonNull Ticket ticket) {
+        this.ticket = ticket;
+    }
+
     @CreatedDate
     @Column(name = "created_at",updatable = false,nullable = false)
     private LocalDateTime createdAt;

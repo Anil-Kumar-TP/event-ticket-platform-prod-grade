@@ -38,6 +38,14 @@ public class Ticket {
     @JoinColumn(name = "purchaser_id",nullable = false)
     private User purchaser;
 
+    void setTicketType(@NonNull TicketType ticketType) {
+        this.ticketType = ticketType;
+    }
+
+    void setPurchaser(@NonNull User purchaser) {
+        this.purchaser = purchaser;
+    }
+
     @CreatedDate
     @Column(name = "created_at",updatable = false,nullable = false)
     private LocalDateTime createdAt;

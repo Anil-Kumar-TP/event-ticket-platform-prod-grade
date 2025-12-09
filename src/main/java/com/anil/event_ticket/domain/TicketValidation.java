@@ -36,6 +36,10 @@ public class TicketValidation {
     @JoinColumn(name = "ticket_id",nullable = false,updatable = false)
     private Ticket ticket;
 
+    public void validatedFor(@NonNull Ticket ticket) {
+        this.ticket = ticket;
+    }
+
     @CreatedDate
     @Column(name = "created_at",updatable = false,nullable = false)
     private LocalDateTime createdAt;
