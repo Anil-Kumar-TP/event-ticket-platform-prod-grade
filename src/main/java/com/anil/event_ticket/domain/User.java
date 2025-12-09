@@ -17,6 +17,7 @@ import java.util.*;
 @Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@EqualsAndHashCode(callSuper = false,onlyExplicitlyIncluded = true)
 public class User {
 
     @Id
@@ -27,6 +28,7 @@ public class User {
     @Column(name = "name",nullable = false)
     private String name;
 
+    @EqualsAndHashCode.Include
     @Column(name = "email",nullable = false,unique = true)
     private String email;
 

@@ -27,6 +27,7 @@ public class TicketType {
     @Column(name = "id",updatable = false,nullable = false)
     private UUID id;
 
+    @EqualsAndHashCode.Include
     @Column(name = "name",nullable = false)
     private String name;
 
@@ -48,6 +49,11 @@ public class TicketType {
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "event_id",nullable = false,updatable = false)
     private Event event;
+
+    @EqualsAndHashCode.Include
+    public UUID getEventId(){
+        return event != null ? event.getId() : null;
+    }
 
     // Helper — only way to change event
     void setEvent(Event event) {

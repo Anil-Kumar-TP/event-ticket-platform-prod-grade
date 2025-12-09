@@ -17,6 +17,7 @@ import java.util.*;
 @Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class Event {
 
     @Id
@@ -24,6 +25,7 @@ public class Event {
     @Column(name = "id",updatable = false,nullable = false)
     private UUID id;
 
+    @EqualsAndHashCode.Include
     @Column(name = "name",nullable = false)
     private String name;
 
@@ -33,6 +35,7 @@ public class Event {
     @Column(name = "end")
     private LocalDateTime end;
 
+    @EqualsAndHashCode.Include
     @Column(name = "venue",nullable = false)
     private String venue;
 
