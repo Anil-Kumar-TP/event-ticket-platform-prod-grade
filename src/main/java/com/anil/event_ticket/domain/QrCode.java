@@ -2,48 +2,42 @@ package com.anil.event_ticket.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 @Entity
-@Table(name = "qr_codes")
-@NoArgsConstructor
+@Table(name = "qr_codes",indexes = {@Index(columnList = "value"),@Index(columnList = "ticket_id")})
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class QrCode {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id",updatable = false,nullable = false)
-    private UUID id;
+public class QrCode extends BaseEntity{
 
     @Column(name = "status",nullable = false)
     @Enumerated(EnumType.STRING)
-    private QrCodeStatusEnum status;
+    @Builder.Default
+    private QrCodeStatusEnum status = QrCodeStatusEnum.ACTIVE;
 
-    @Column(name = "value",nullable = false,unique = true)
+    @Column(name = "value",nullable = false,length = 2048,unique = true)
     private String value;
 
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name = "ticket_id",nullable = false,unique = true)
+    @JoinColumn(name = "ticket_id",nullable = false)
     private Ticket ticket;
+
+    @Version
+    private Long version;
+
+    // INVARIANT: Canon - Only one QR code may be ACTIVE at a time.
+    public void revoke() {
+        this.status = QrCodeStatusEnum.REVOKED;
+    }
+
+    public boolean isActive() {
+        return this.status == QrCodeStatusEnum.ACTIVE;
+    }
 
     void setTicket(@NonNull Ticket ticket) {
         this.ticket = ticket;
     }
-
-    @CreatedDate
-    @Column(name = "created_at",updatable = false,nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at",nullable = false)
-    private LocalDateTime updatedAt;
 }

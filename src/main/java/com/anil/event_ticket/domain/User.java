@@ -1,77 +1,50 @@
 package com.anil.event_ticket.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",indexes = @Index(columnList = "email"))
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-@EqualsAndHashCode(callSuper = false,onlyExplicitlyIncluded = true)
-public class User {
+public class User extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id",updatable = false,nullable = false)
-    private UUID id;
-
+    @NotBlank
     @Column(name = "name",nullable = false)
     private String name;
 
-    @EqualsAndHashCode.Include
+    @Email
     @Column(name = "email",nullable = false,unique = true)
     private String email;
 
+    @NotBlank
     @Column(name = "password",nullable = false)
     private String password;
 
-    //all events user organizes
+    @Version
+    private Long version;
+
     @OneToMany(mappedBy = "organizer",cascade = CascadeType.ALL,orphanRemoval = true)
     @Builder.Default
     private Set<Event> organizedEvents = new HashSet<>();
-    //all events user attends
 
-    @ManyToMany
-    @JoinTable(name = "event_attendees",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "event_id"),uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "event_id"}))
-    @Builder.Default
-    private Set<Event> attendingEvents = new HashSet<>();
-    //all events user staffs
-
-    @ManyToMany
-    @JoinTable(name = "event_staff",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "event_id"),uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "event_id"}))
+    @ManyToMany(mappedBy = "staff")
     @Builder.Default
     private Set<Event> staffingEvents = new HashSet<>();
 
-    public void attendEvent(Event event) {
-        attendingEvents.add(event);
-    }
-
-    public void staffEvent(Event event) {
-        staffingEvents.add(event);
-    }
-
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles",joinColumns = @JoinColumn(name = "user_id"),uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","role"}))
     @Column(name = "role")
     @Builder.Default
     private Set<RolesEnum> roles = new HashSet<>();
 
-    @CreatedDate
-    @Column(name = "created_at",updatable = false,nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at",nullable = false)
-    private LocalDateTime updatedAt;
 }

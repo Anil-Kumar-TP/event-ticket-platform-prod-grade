@@ -1,10 +1,6 @@
-// src/main/java/com/anil/event_ticket/auth/security/UserDetailsServiceImpl.java
-
 package com.anil.event_ticket.auth.security;
 
-import com.anil.event_ticket.domain.User;
 import com.anil.event_ticket.repository.UserRepository;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,10 +14,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public @NonNull UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-
-        return new UserDetailsImpl(user);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmailWithRoles(email)
+                .map(UserDetailsImpl::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 }
